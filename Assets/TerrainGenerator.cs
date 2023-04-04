@@ -21,7 +21,6 @@ public sealed class TerrainGenerator : MonoBehaviour
 	private readonly List<Block[,,]> maps       = new();
 	private const    int             CHUNK_SIZE = 16;
 	private const    int             MAX_HEIGHT = 64;
-
 	// heightmap
 	public UnityEngine.Material[] materials;
 	[Tooltip("The lower the value the higher the terrain will be.")]
@@ -76,10 +75,10 @@ public sealed class TerrainGenerator : MonoBehaviour
 					// if there is no block on the top side then draw top side
 					if (_y == MAX_HEIGHT || maps[_mapIndex][_x, _y + 1, _z].material == Material.Air)
 					{
-						_vertices.Add(new(_x, _y, _z));
-						_vertices.Add(new(_x         + 1, _y, _z));
-						_vertices.Add(new(_x         + 1, _y, _z + 1));
-						_vertices.Add(new(_x, _y, _z + 1));
+						_vertices.Add(new(_x, _y, _z)); 		   // bottom left
+						_vertices.Add(new(_x         + 1, _y, _z)); // bottom right
+						_vertices.Add(new(_x         + 1, _y, _z + 1)); // top right
+						_vertices.Add(new(_x, _y, _z + 1)); 		   // top left
 						_triangles.Add(_vertices.Count - 4); // 0
 						_triangles.Add(_vertices.Count - 2); // 2
 						_triangles.Add(_vertices.Count - 3); // 1
@@ -96,20 +95,20 @@ public sealed class TerrainGenerator : MonoBehaviour
 					if (_x == 0 || maps[_mapIndex][_x - 1, _y, _z].material == Material.Air)
 					{
 						_vertices.Add(new(_x, _y     - 1, _z));     // bottom left
-						_vertices.Add(new(_x, _y     - 1, _z + 1)); // bottom right
-						_vertices.Add(new(_x, _y, _z + 1));         // top right
 						_vertices.Add(new(_x, _y, _z));             // top left
+						_vertices.Add(new(_x, _y, _z + 1));         // top right
+						_vertices.Add(new(_x, _y     - 1, _z + 1)); // bottom right
 						_triangles.Add(_vertices.Count - 4);        // 0
+						_triangles.Add(_vertices.Count - 2);        // 2
 						_triangles.Add(_vertices.Count - 3);        // 1
-						_triangles.Add(_vertices.Count - 2);        // 2
 						_triangles.Add(_vertices.Count - 4);        // 0
-						_triangles.Add(_vertices.Count - 2);        // 2
 						_triangles.Add(_vertices.Count - 1);        // 3;
+						_triangles.Add(_vertices.Count - 2);        // 2
 						// tiling 1, 0.5 , offset 0, 0
 						_uvs.Add(new(0f, 0f));
-						_uvs.Add(new(1f, 0f));
-						_uvs.Add(new(1f, .5f));
 						_uvs.Add(new(0f, .5f));
+						_uvs.Add(new(1f, .5f));
+						_uvs.Add(new(1f, 0f));
 					}
 
 					// if there is no block on the right side then draw right side
@@ -136,60 +135,61 @@ public sealed class TerrainGenerator : MonoBehaviour
 					if (_z == 0 || maps[_mapIndex][_x, _y, _z - 1].material == Material.Air)
 					{
 						_vertices.Add(new(_x     + 1, _y - 1, _z)); // top right
-						_vertices.Add(new(_x, _y - 1, _z));         // top left
-						_vertices.Add(new(_x, _y, _z));             // bottom left
 						_vertices.Add(new(_x + 1, _y, _z));         // bottom right
+						_vertices.Add(new(_x, _y, _z));             // bottom left
+						_vertices.Add(new(_x, _y - 1, _z));         // top left
 						_triangles.Add(_vertices.Count - 4);        // 0
+						_triangles.Add(_vertices.Count - 2);        // 2
 						_triangles.Add(_vertices.Count - 3);        // 1
-						_triangles.Add(_vertices.Count - 2);        // 2
 						_triangles.Add(_vertices.Count - 4);        // 0
-						_triangles.Add(_vertices.Count - 2);        // 2
 						_triangles.Add(_vertices.Count - 1);        // 3
+						_triangles.Add(_vertices.Count - 2);        // 2
 						// tiling 1, 0.5 , offset 0, 0
 						_uvs.Add(new(0f, 0f));
-						_uvs.Add(new(1f, 0f));
-						_uvs.Add(new(1f, .5f));
 						_uvs.Add(new(0f, .5f));
+						_uvs.Add(new(1f, .5f));
+						_uvs.Add(new(1f, 0f));
 					}
 
 					// if there is no block on the back side then draw back side
 					if (_z == CHUNK_SIZE - 1 || maps[_mapIndex][_x, _y, _z + 1].material == Material.Air)
 					{
 						_vertices.Add(new(_x, _y     - 1, _z     + 1));         // top left
-						_vertices.Add(new(_x         + 1, _y     - 1, _z + 1)); // top right
-						_vertices.Add(new(_x         + 1, _y, _z + 1));         // bottom right
 						_vertices.Add(new(_x, _y, _z + 1));                     // bottom left
+						_vertices.Add(new(_x     + 1, _y, _z     + 1));         // bottom right
+						_vertices.Add(new(_x     + 1, _y     - 1, _z     + 1)); // top right
 						_triangles.Add(_vertices.Count - 4);                    // 0
+						_triangles.Add(_vertices.Count - 2);                    // 2
 						_triangles.Add(_vertices.Count - 3);                    // 1
-						_triangles.Add(_vertices.Count - 2);                    // 2
 						_triangles.Add(_vertices.Count - 4);                    // 0
-						_triangles.Add(_vertices.Count - 2);                    // 2
 						_triangles.Add(_vertices.Count - 1);                    // 3
+						_triangles.Add(_vertices.Count - 2);                    // 2
 						// tiling 1, 0.5 , offset 0, 0
-						_uvs.Add(new(0f, 0f));
 						_uvs.Add(new(1f, 0f));
 						_uvs.Add(new(1f, .5f));
 						_uvs.Add(new(0f, .5f));
+						_uvs.Add(new(0f, 0f));
+						
 					}
 
 					// if there is no block on the bottom side then draw bottom side
 					if (_y == 0 || maps[_mapIndex][_x, _y - 1, _z].material == Material.Air)
 					{
-						_vertices.Add(new(_x, _y - 1, _z));
-						_vertices.Add(new(_x     + 1, _y - 1, _z));
-						_vertices.Add(new(_x     + 1, _y - 1, _z + 1));
-						_vertices.Add(new(_x, _y - 1, _z + 1));
-						_triangles.Add(_vertices.Count - 4); // 0
-						_triangles.Add(_vertices.Count - 3); // 1
-						_triangles.Add(_vertices.Count - 2); // 2
-						_triangles.Add(_vertices.Count - 4); // 0
-						_triangles.Add(_vertices.Count - 2); // 2
-						_triangles.Add(_vertices.Count - 1); // 3
+						_vertices.Add(new(_x     + 1, _y - 1, _z     + 1)); // top right
+						_vertices.Add(new(_x + 1, _y - 1, _z));             // bottom right
+						_vertices.Add(new(_x, _y - 1, _z));                 // bottom left
+						_vertices.Add(new(_x, _y - 1, _z     + 1));         // top left
+						_triangles.Add(_vertices.Count - 4);                // 0
+						_triangles.Add(_vertices.Count - 2);                // 2
+						_triangles.Add(_vertices.Count - 3);                // 1
+						_triangles.Add(_vertices.Count - 4);                // 0
+						_triangles.Add(_vertices.Count - 1);                // 3
+						_triangles.Add(_vertices.Count - 2);                // 2
 						// tiling 1, 0.5 , offset 0, 0
 						_uvs.Add(new(0f, 0f));
-						_uvs.Add(new(1f, 0f));
-						_uvs.Add(new(1f, .5f));
 						_uvs.Add(new(0f, .5f));
+						_uvs.Add(new(1f, .5f));
+						_uvs.Add(new(1f, 0f));
 					}
 				}
 			}
@@ -204,6 +204,7 @@ public sealed class TerrainGenerator : MonoBehaviour
 		GameObject _gameObject = new(_material.ToString());
 		_gameObject.transform.SetParent(transform);
 		_gameObject.transform.position                      = new(_xOffset, 0, _zOffset);
+		_gameObject.name                                    = _mapIndex.ToString();
 		_gameObject.AddComponent<MeshFilter>().mesh         = _mesh;
 		_gameObject.AddComponent<MeshRenderer>().material   = materials[(int)_material - 1];
 		_gameObject.AddComponent<MeshCollider>().sharedMesh = _mesh;
