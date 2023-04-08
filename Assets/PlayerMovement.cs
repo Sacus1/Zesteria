@@ -11,10 +11,11 @@ public sealed class PlayerMovement : MonoBehaviour
 	public        float               mouseSensitivity = 10f;
 	public        bool                isOffset;
 	public        float               selectDistance = 5f;
+	public        bool                isRunning;
+	public        float               runMultiplier = 2f;
 	private       Camera              cam;
 	private       CharacterController controller;
 	private       Vector3             moveDirection;
-	public        bool                isRunning;
 	private void Start()
 	{
 		cam = GetComponentInChildren<Camera>();
@@ -24,9 +25,9 @@ public sealed class PlayerMovement : MonoBehaviour
 	}
 	private void FixedUpdate()
 	{
-		controller.Move(transform.TransformDirection(moveDirection) * (speed * Time.deltaTime));
+		controller.Move(transform.TransformDirection(moveDirection) * (speed * Time.deltaTime * (isRunning ? runMultiplier : 1f)));
 		// apply gravity
-		moveDirection.y -= GRAVITY * Time.deltaTime;
+		moveDirection.y -= GRAVITY * Time.fixedDeltaTime;
 		DrawCube();
 
 	}
@@ -188,16 +189,26 @@ public sealed class PlayerMovement : MonoBehaviour
 		if (Cursor.lockState != CursorLockMode.Locked) return;
 
 		Vector2 _input = _value.Get<Vector2>();
-		transform.Rotate(Vector3.up, _input.x);
+		transform.Rotate(Vector3.up, _input.x * Time.deltaTime * mouseSensitivity);
 		float _angle = cam.transform.localEulerAngles.x - _input.y * Time.deltaTime * mouseSensitivity;
 		// convert from 0-360 to -180-180
 		_angle                         = _angle > 180 ? _angle - 360 : _angle;
 		_angle                         = Mathf.Max(Mathf.Min(_angle, CAM_MAX), CAM_MIN);
 		cam.transform.localEulerAngles = new(_angle, 0, 0);
 	}
-	private void OnRun()
+	private void OnRun(InputValue _value)
 	{
-		isRunning = !isRunning;
+		isRunning = _value.isPressed;
+		// if running increase fov and decrease mouse sensitivity
+		if (isRunning)
+		{
+			cam.fieldOfView  *= 1.2f;
+			mouseSensitivity /= 1.2f;
+		}
+		else
+		{
+			cam.fieldOfView  /= 1.2f;
+			mouseSensitivity *= 1.2f;
+		}
 	}
-
 }
