@@ -30,12 +30,15 @@ public sealed class PlayerMovement : MonoBehaviour
 		// apply gravity
 		moveDirection.y -= GRAVITY * Time.fixedDeltaTime;
 		DrawCube();
-
+		Debug.DrawRay(cam.ScreenPointToRay(Input.mousePosition).origin, cam.ScreenPointToRay(Input.mousePosition).direction * selectDistance, Color.red);
 	}
 	private void DrawCube()
 	{
 		if (!GetCube(out RaycastHit _hit, out Vector3[] _points, selectDistance))
 			return;
+		// convert to world space
+		for (int i = 0; i < _points.Length; i++)
+			_points[i] = _hit.collider.transform.TransformPoint(_points[i]);
 		// draw cube outline 
 		lineRenderer.positionCount = 17;
 		lineRenderer.SetPositions(new[]
@@ -72,12 +75,6 @@ public sealed class PlayerMovement : MonoBehaviour
 			_point2 = _vertices[_triangles[_hit.triangleIndex * 3 + 1 + _offset]];
 			_point3 = _vertices[_triangles[_hit.triangleIndex * 3 + 4 + _offset]];
 		}
-
-		// convert to world space
-		_point0 = _meshCollider.transform.TransformPoint(_point0);
-		_point1 = _meshCollider.transform.TransformPoint(_point1);
-		_point2 = _meshCollider.transform.TransformPoint(_point2);
-		_point3 = _meshCollider.transform.TransformPoint(_point3);
 		return true;
 	}
 	private bool GetCube(out RaycastHit _hit, out Vector3[] _points, float _distance)
@@ -157,7 +154,18 @@ public sealed class PlayerMovement : MonoBehaviour
 			_points[7] = _p3 + Vector3.forward;
 		}
 
-		// if face is bottom TODO: je peut pas test ca car je ne peux pas placer un cube sur le sol
+		// if face is bottom
+		if (_normal == Vector3.up)
+		{
+			_points[0] = _p0;
+			_points[1] = _p1;
+			_points[2] = _p2;
+			_points[3] = _p3;
+			_points[4] = _p0 + Vector3.down;
+			_points[5] = _p1 + Vector3.down;
+			_points[6] = _p2 + Vector3.down;
+			_points[7] = _p3 + Vector3.down;
+		}
 
 		return true;
 
@@ -203,5 +211,18 @@ public sealed class PlayerMovement : MonoBehaviour
 			cam.fieldOfView  /= 1.2f;
 			mouseSensitivity *= 1.2f;
 		}
+	}
+	private void OnClick()
+	{
+		if (!GetCube(out RaycastHit _hit, out Vector3[] _points, selectDistance)) return;
+		string[] _name = _hit.collider.gameObject.name.Split('_');
+		int      index = int.Parse(_name[0]);
+		// get terrain
+		TerrainGenerator terrain = GameObject.Find("Terrain").GetComponent<TerrainGenerator>(); //TODO : Mettre en attribut
+		// get the cube mid point
+		Vector3 _midPoint = (_points[0] + _points[1] + _points[2] + _points[3] + _points[4] + _points[5] + _points[6] + _points[7]) / 8;
+		// remove the cube from the terrain
+		terrain.RemoveCube(_midPoint, index);
+
 	}
 }
