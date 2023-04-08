@@ -5,7 +5,7 @@ public sealed class PlayerMovement : MonoBehaviour
 {
 	private const float               CAM_MAX          = 90;
 	private const float               CAM_MIN          = -90;
-	private const float               GRAVITY          = 9.81f;
+	private const float               GRAVITY          = 9.81f / 2;
 	public        float               speed            = 5f;
 	public        float               jumpForce        = 5f;
 	public        float               mouseSensitivity = 10f;
