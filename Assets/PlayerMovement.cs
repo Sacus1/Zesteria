@@ -13,6 +13,7 @@ public sealed class PlayerMovement : MonoBehaviour
 	public        float               selectDistance = 5f;
 	public        bool                isRunning;
 	public        float               runMultiplier = 2f;
+	public        LineRenderer        lineRenderer; // this is the line renderer to draw the line around the cube
 	private       Camera              cam;
 	private       CharacterController controller;
 	private       Vector3             moveDirection;
@@ -36,19 +37,11 @@ public sealed class PlayerMovement : MonoBehaviour
 		if (!GetCube(out RaycastHit _hit, out Vector3[] _points, selectDistance))
 			return;
 		// draw cube outline 
-		Color _color = Color.black;
-		Debug.DrawLine(_points[0], _points[1], _color);
-		Debug.DrawLine(_points[1], _points[2], _color);
-		Debug.DrawLine(_points[2], _points[3], _color);
-		Debug.DrawLine(_points[3], _points[0], _color);
-		Debug.DrawLine(_points[0], _points[4], _color);
-		Debug.DrawLine(_points[1], _points[5], _color);
-		Debug.DrawLine(_points[2], _points[6], _color);
-		Debug.DrawLine(_points[3], _points[7], _color);
-		Debug.DrawLine(_points[4], _points[5], _color);
-		Debug.DrawLine(_points[5], _points[6], _color);
-		Debug.DrawLine(_points[6], _points[7], _color);
-		Debug.DrawLine(_points[7], _points[4], _color);
+		lineRenderer.positionCount = 17;
+		lineRenderer.SetPositions(new[]
+		{
+			_points[0], _points[1], _points[2], _points[3], _points[0], _points[4], _points[5], _points[6], _points[7], _points[4], _points[5], _points[1], _points[2], _points[6], _points[7], _points[3], _points[0]
+		});
 	}
 	private bool GetSquare(out RaycastHit _hit, out Vector3 _point0, out Vector3 _point1, out Vector3 _point2, out Vector3 _point3, float distance = Mathf.Infinity)
 	{
@@ -87,9 +80,9 @@ public sealed class PlayerMovement : MonoBehaviour
 		_point3 = _meshCollider.transform.TransformPoint(_point3);
 		return true;
 	}
-	private bool GetCube(out RaycastHit _hit, out Vector3[] _points, float distance)
+	private bool GetCube(out RaycastHit _hit, out Vector3[] _points, float _distance)
 	{
-		if (!GetSquare(out _hit, out Vector3 _p0, out Vector3 _p1, out Vector3 _p2, out Vector3 _p3, distance))
+		if (!GetSquare(out _hit, out Vector3 _p0, out Vector3 _p1, out Vector3 _p2, out Vector3 _p3, _distance))
 		{
 			_points = null;
 			return false;
