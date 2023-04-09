@@ -60,6 +60,7 @@ public sealed class TerrainGenerator : MonoBehaviour
 		List<Vector3> _vertices  = new();
 		List<int>     _triangles = new();
 		List<Vector2> _uvs       = new();
+		List<Vector3> _normals   = new();
 		for (int _x = 0; _x < CHUNK_SIZE; _x++)
 		{
 			for (int _z = 0; _z < CHUNK_SIZE; _z++)
@@ -88,6 +89,11 @@ public sealed class TerrainGenerator : MonoBehaviour
 						_uvs.Add(new(1f, .5f));
 						_uvs.Add(new(1f, 1f));
 						_uvs.Add(new(0f, 1f));
+						// normals
+						_normals.Add(Vector3.up);
+						_normals.Add(Vector3.up);
+						_normals.Add(Vector3.up);
+						_normals.Add(Vector3.up);
 					}
 					// if there is no block on the left side then draw left side
 					if (_x == 0 || maps[_mapIndex][_x - 1, _y, _z].material == Material.Air)
@@ -107,6 +113,11 @@ public sealed class TerrainGenerator : MonoBehaviour
 						_uvs.Add(new(0f, .5f));
 						_uvs.Add(new(1f, .5f));
 						_uvs.Add(new(1f, 0f));
+						// normals
+						_normals.Add(Vector3.left);
+						_normals.Add(Vector3.left);
+						_normals.Add(Vector3.left);
+						_normals.Add(Vector3.left);
 					}
 
 					// if there is no block on the right side then draw right side
@@ -127,6 +138,11 @@ public sealed class TerrainGenerator : MonoBehaviour
 						_uvs.Add(new(1f, 0f));
 						_uvs.Add(new(1f, .5f));
 						_uvs.Add(new(0f, .5f));
+						// normals
+						_normals.Add(Vector3.right);
+						_normals.Add(Vector3.right);
+						_normals.Add(Vector3.right);
+						_normals.Add(Vector3.right);
 					}
 
 					// if there is no block on the front side then draw front side
@@ -147,6 +163,11 @@ public sealed class TerrainGenerator : MonoBehaviour
 						_uvs.Add(new(0f, .5f));
 						_uvs.Add(new(1f, .5f));
 						_uvs.Add(new(1f, 0f));
+						// normals
+						_normals.Add(Vector3.forward);
+						_normals.Add(Vector3.forward);
+						_normals.Add(Vector3.forward);
+						_normals.Add(Vector3.forward);
 					}
 
 					// if there is no block on the back side then draw back side
@@ -167,6 +188,11 @@ public sealed class TerrainGenerator : MonoBehaviour
 						_uvs.Add(new(1f, .5f));
 						_uvs.Add(new(0f, .5f));
 						_uvs.Add(new(0f, 0f));
+						// normals
+						_normals.Add(Vector3.back);
+						_normals.Add(Vector3.back);
+						_normals.Add(Vector3.back);
+						_normals.Add(Vector3.back);
 
 					}
 
@@ -188,6 +214,11 @@ public sealed class TerrainGenerator : MonoBehaviour
 						_uvs.Add(new(0f, .5f));
 						_uvs.Add(new(1f, .5f));
 						_uvs.Add(new(1f, 0f));
+						// normals
+						_normals.Add(Vector3.down);
+						_normals.Add(Vector3.down);
+						_normals.Add(Vector3.down);
+						_normals.Add(Vector3.down);
 					}
 				}
 			}
@@ -195,6 +226,7 @@ public sealed class TerrainGenerator : MonoBehaviour
 		_mesh.vertices  = _vertices.ToArray();
 		_mesh.triangles = _triangles.ToArray();
 		_mesh.uv        = _uvs.ToArray();
+		_mesh.normals   = _normals.ToArray();
 		_mesh.RecalculateNormals();
 		_mesh.RecalculateBounds();
 		_mesh.Optimize();
