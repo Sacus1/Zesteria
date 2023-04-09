@@ -1,22 +1,22 @@
 using UnityEngine;
-public class DayNight : MonoBehaviour
+public sealed class DayNight : MonoBehaviour
 {
 	[Range(0, 24)]
 	public float timeOfDay = 12;
-	public  float dayLength = 180f; // seconds
-	public  float angle;
-	private Light sun;
-
+	public  float     dayLength = 180f; // seconds
+	public  float     angle;
+	public  Transform reference;
+	private Light     sun;
 	private void Start()
 	{
-		sun = GetComponent<Light>();
+		sun       = GetComponent<Light>();
+		timeOfDay = 12;
 	}
 
 	private void Update()
 	{
-		timeOfDay                   += Time.deltaTime / dayLength * 24;
-		timeOfDay                   %= 24;
-		sun.transform.localRotation =  Quaternion.Euler(timeOfDay / 24 * 360, angle, 0);
+		timeOfDay += Time.deltaTime / dayLength * 24;
+		timeOfDay %= 24;
 		// set the intensity of the sun based on the time of day
 		float _intensity;
 		_intensity    = 1 - Mathf.Abs(timeOfDay / 12 - 1) + 0.2f;
@@ -29,7 +29,14 @@ public class DayNight : MonoBehaviour
 		RenderSettings.fogDensity = 1 - _intensity;
 		// set the sun color based on the time of day
 		sun.color = new(_intensity, _intensity, _intensity);
-		// set the sun position based on the time of day
-		sun.transform.position = new(0, 0, 0);
+		// set the sun position 
+		int   _radius          = (int)(reference.position.magnitude + 100);
+		float _timeOfDay = (timeOfDay - 6) / 24 * 360 * Mathf.Deg2Rad;
+		int   _x          = (int)(_radius * Mathf.Cos(_timeOfDay) * Mathf.Cos(angle * Mathf.Deg2Rad));
+		int   _y          = (int)(_radius * Mathf.Sin(_timeOfDay) * Mathf.Cos(angle * Mathf.Deg2Rad));
+		int   _z          = (int)(_radius * Mathf.Sin(angle                         * Mathf.Deg2Rad));
+		sun.transform.position = new(_x, _y, _z);
+		// set the sun rotation
+		sun.transform.LookAt(Vector3.zero);
 	}
 }
