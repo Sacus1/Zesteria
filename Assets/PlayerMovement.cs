@@ -32,7 +32,8 @@ public sealed class PlayerMovement : MonoBehaviour
 		// apply gravity
 		moveDirection.y -= GRAVITY * Time.fixedDeltaTime;
 		DrawCube();
-		Debug.DrawRay(cam.ScreenPointToRay(Input.mousePosition).origin, cam.ScreenPointToRay(Input.mousePosition).direction * selectDistance, Color.red);
+		if (transform.position.y < -100)
+			transform.position = new(0, 100, 0);
 	}
 	private void DrawCube()
 	{

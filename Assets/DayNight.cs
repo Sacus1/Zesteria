@@ -13,13 +13,12 @@ public sealed class DayNight : MonoBehaviour
 		timeOfDay = 12;
 	}
 
-	private void Update()
+	private void FixedUpdate()
 	{
-		timeOfDay += Time.deltaTime / dayLength * 24;
+		timeOfDay += Time.fixedDeltaTime / dayLength * 24;
 		timeOfDay %= 24;
 		// set the intensity of the sun based on the time of day
-		float _intensity;
-		_intensity    = 1 - Mathf.Abs(timeOfDay / 12 - 1) + 0.2f;
+		float _intensity = 1 - Mathf.Abs(timeOfDay / 12 - 1) + 0.2f;
 		sun.intensity = _intensity;
 		// set the ambient light based on the time of day
 		RenderSettings.ambientLight = new(_intensity, _intensity, _intensity);
@@ -30,12 +29,13 @@ public sealed class DayNight : MonoBehaviour
 		// set the sun color based on the time of day
 		sun.color = new(_intensity, _intensity, _intensity);
 		// set the sun position 
-		int   _radius          = (int)(reference.position.magnitude + 100);
+		// keep the sun at a distance of 100 units from the reference
+		int   _radius    = 100;
 		float _timeOfDay = (timeOfDay - 6) / 24 * 360 * Mathf.Deg2Rad;
-		int   _x          = (int)(_radius * Mathf.Cos(_timeOfDay) * Mathf.Cos(angle * Mathf.Deg2Rad));
-		int   _y          = (int)(_radius * Mathf.Sin(_timeOfDay) * Mathf.Cos(angle * Mathf.Deg2Rad));
-		int   _z          = (int)(_radius * Mathf.Sin(angle                         * Mathf.Deg2Rad));
-		sun.transform.position = new(_x, _y, _z);
+		int   _x         = (int)(_radius * Mathf.Cos(_timeOfDay) * Mathf.Cos(angle * Mathf.Deg2Rad));
+		int   _y         = (int)(_radius * Mathf.Sin(_timeOfDay) * Mathf.Cos(angle * Mathf.Deg2Rad));
+		int   _z         = (int)(_radius * Mathf.Sin(angle                         * Mathf.Deg2Rad));
+		sun.transform.position = new Vector3(_x, _y, _z) + reference.position;
 		// set the sun rotation
 		sun.transform.LookAt(Vector3.zero);
 	}
