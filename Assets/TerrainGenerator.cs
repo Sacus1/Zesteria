@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 public sealed class TerrainGenerator : MonoBehaviour
 {
 	public enum Material
@@ -8,7 +9,9 @@ public sealed class TerrainGenerator : MonoBehaviour
 		Air,
 		Grass,
 		Dirt,
-		Stone
+		Stone,
+		Wood,
+		Leaves
 	}
 	private const int CHUNK_SIZE = 16;
 	private const int MAX_HEIGHT = 64;
@@ -25,14 +28,15 @@ public sealed class TerrainGenerator : MonoBehaviour
 		{
 			for (int _z = -pregen / 4; _z <= pregen / 4; _z++)
 			{
-				GenerateChunk(_x              * CHUNK_SIZE, _z * CHUNK_SIZE, out int _index);
-				CreateMesh(Material.Grass, _x * CHUNK_SIZE, _z * CHUNK_SIZE, _index);
-				CreateMesh(Material.Dirt,  _x * CHUNK_SIZE, _z * CHUNK_SIZE, _index);
-				CreateMesh(Material.Stone, _x * CHUNK_SIZE, _z * CHUNK_SIZE, _index);
+				GenerateChunk(_x               * CHUNK_SIZE, _z * CHUNK_SIZE, out int _index);
+				CreateMesh(Material.Grass,  _x * CHUNK_SIZE, _z * CHUNK_SIZE, _index);
+				CreateMesh(Material.Dirt,   _x * CHUNK_SIZE, _z * CHUNK_SIZE, _index);
+				CreateMesh(Material.Stone,  _x * CHUNK_SIZE, _z * CHUNK_SIZE, _index);
+				CreateMesh(Material.Wood,   _x * CHUNK_SIZE, _z * CHUNK_SIZE, _index);
+				CreateMesh(Material.Leaves, _x * CHUNK_SIZE, _z * CHUNK_SIZE, _index);
 			}
 		}
 	}
-
 	private void GenerateChunk(int _xOffset, int _zOffset, out int _mapIndex)
 	{
 		_mapIndex = maps.Count;
@@ -56,10 +60,49 @@ public sealed class TerrainGenerator : MonoBehaviour
 						material = _material
 					};
 				}
+				// chance to spawn tree
+				if (Random.Range(0, 100) < 1)
+					GenerateTree(new(_x, _height, _z), _mapIndex);
 			}
 		}
 	}
 
+	private void GenerateTree(Vector3 _position, int _index)
+	{
+		int _height = Random.Range(3, 6);
+		for (int _y = 0; _y < _height; _y++)
+		{
+			// if out of bounds
+			if ((int)_position.x      < 0 || (int)_position.x      >= CHUNK_SIZE ||
+			    (int)_position.y + _y < 0 || (int)_position.y + _y >= MAX_HEIGHT ||
+			    (int)_position.z      < 0 || (int)_position.z      >= CHUNK_SIZE)
+				continue;
+			maps[_index][(int)_position.x, (int)_position.y + _y, (int)_position.z] = new()
+			{
+				material = Material.Wood
+			};
+		}
+		for (int _x = -2; _x <= 2; _x++)
+		{
+			for (int _z = -2; _z <= 2; _z++)
+			{
+				for (int _y = -2; _y <= 2; _y++)
+				{
+					if (Mathf.Abs(_x) + Mathf.Abs(_y) + Mathf.Abs(_z) > 3)
+						continue;
+					// if out of bounds
+					if ((int)_position.x + _x < 0 || (int)_position.x + _x >= CHUNK_SIZE ||
+					    (int)_position.y + _height                    + _y < 0           || (int)_position.y + _height + _y >= MAX_HEIGHT ||
+					    (int)_position.z + _z                              < 0           || (int)_position.z + _z           >= CHUNK_SIZE)
+						continue;
+					maps[_index][(int)_position.x + _x, (int)_position.y + _height + _y, (int)_position.z + _z] = new()
+					{
+						material = Material.Leaves
+					};
+				}
+			}
+		}
+	}
 	// if you don't understand this function , me neither
 	private void CreateMesh(Material _material, int _xOffset, int _zOffset, int _mapIndex)
 	{
@@ -283,7 +326,7 @@ public sealed class TerrainGenerator : MonoBehaviour
 		int _layerMask    = ~_terrainLayer;
 		if (Physics.CheckBox(new(_x, _y, _z), Vector3.one * .5f, Quaternion.identity, _layerMask))
 			return;
-		
+
 		if (maps[_index][_x, _y, _z].material == Material.Air)
 		{
 			maps[_index][_x, _y, _z].material = _mat;

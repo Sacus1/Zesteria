@@ -1784,6 +1784,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 18603b988c527664fa48846614f00517, type: 2}
   - {fileID: 2100000, guid: bc25c4b393ae6e740a9ffc091b3d2d30, type: 2}
   - {fileID: 2100000, guid: 367c0ddd0a8d792419a18029a6eace88, type: 2}
+  - {fileID: 2100000, guid: c35dc12abd620004ab5c7fef93c3eda6, type: 2}
+  - {fileID: 2100000, guid: 08ebb46637d4641448a868de07f846c5, type: 2}
   riseSpeed: 50
   pregen: 48
 --- !u!4 &893308498

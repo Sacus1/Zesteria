@@ -30,11 +30,11 @@ public sealed class DayNight : MonoBehaviour
 		sun.color = new(_intensity, _intensity, _intensity);
 		// set the sun position 
 		// keep the sun at a distance of 100 units from the reference
-		int   _radius    = 100;
-		float _timeOfDay = (timeOfDay - 6) / 24 * 360 * Mathf.Deg2Rad;
-		int   _x         = (int)(_radius * Mathf.Cos(_timeOfDay) * Mathf.Cos(angle * Mathf.Deg2Rad));
-		int   _y         = (int)(_radius * Mathf.Sin(_timeOfDay) * Mathf.Cos(angle * Mathf.Deg2Rad));
-		int   _z         = (int)(_radius * Mathf.Sin(angle                         * Mathf.Deg2Rad));
+		const int _radius    = 100;
+		float     _timeOfDay = (timeOfDay - 6) / 24 * 360 * Mathf.Deg2Rad;
+		int       _x         = (int)(_radius * Mathf.Cos(_timeOfDay) * Mathf.Cos(angle * Mathf.Deg2Rad));
+		int       _y         = (int)(_radius * Mathf.Sin(_timeOfDay) * Mathf.Cos(angle * Mathf.Deg2Rad));
+		int       _z         = (int)(_radius * Mathf.Sin(angle                         * Mathf.Deg2Rad));
 		sun.transform.position = new Vector3(_x, _y, _z) + reference.position;
 		// set the sun rotation
 		sun.transform.LookAt(Vector3.zero);
