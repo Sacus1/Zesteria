@@ -17,12 +17,14 @@ public sealed class PlayerMovement : MonoBehaviour
 	private       Camera              cam;
 	private       CharacterController controller;
 	private       Vector3             moveDirection;
+	private       TerrainGenerator    terrain;
 	private void Start()
 	{
 		cam = GetComponentInChildren<Camera>();
 		// lock cursor
 		Cursor.lockState = CursorLockMode.Locked;
 		controller       = GetComponent<CharacterController>();
+		terrain          = GameObject.Find("Terrain").GetComponent<TerrainGenerator>();
 	}
 	private void FixedUpdate()
 	{
@@ -212,17 +214,26 @@ public sealed class PlayerMovement : MonoBehaviour
 			mouseSensitivity *= 1.2f;
 		}
 	}
-	private void OnClick()
+	private void OnLeftClick()
 	{
 		if (!GetCube(out RaycastHit _hit, out Vector3[] _points, selectDistance)) return;
-		string[] _name = _hit.collider.gameObject.name.Split('_');
-		int      index = int.Parse(_name[0]);
-		// get terrain
-		TerrainGenerator terrain = GameObject.Find("Terrain").GetComponent<TerrainGenerator>(); //TODO : Mettre en attribut
+		string[] _name  = _hit.collider.gameObject.name.Split('_');
+		int      _index = int.Parse(_name[0]);
 		// get the cube mid point
 		Vector3 _midPoint = (_points[0] + _points[1] + _points[2] + _points[3] + _points[4] + _points[5] + _points[6] + _points[7]) / 8;
 		// remove the cube from the terrain
-		terrain.RemoveCube(_midPoint, index);
+		terrain.RemoveCube(_midPoint, _index);
 
+	}
+	private void OnRightClick()
+	{
+		if (!Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit _hit, selectDistance)) return;
+		// get coordinate to place cube
+		Vector3 _point = _hit.point + _hit.normal * 0.5f - _hit.transform.position;
+		// get the index of the chunk
+		string[] _name  = _hit.collider.gameObject.name.Split('_');
+		int      _index = int.Parse(_name[0]);
+		// add cube to terrain
+		terrain.AddCube(_point, _index, TerrainGenerator.Material.Grass);
 	}
 }

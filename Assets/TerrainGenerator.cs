@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 public sealed class TerrainGenerator : MonoBehaviour
 {
+	public enum Material
+	{
+		Air,
+		Grass,
+		Dirt,
+		Stone
+	}
 	private const int CHUNK_SIZE = 16;
 	private const int MAX_HEIGHT = 64;
 	// heightmap
@@ -235,6 +242,7 @@ public sealed class TerrainGenerator : MonoBehaviour
 		_gameObject.transform.SetParent(transform);
 		_gameObject.transform.position                      = new(_xOffset, 0, _zOffset);
 		_gameObject.name                                    = _mapIndex + "_" + (int)_material;
+		_gameObject.layer                                   = LayerMask.NameToLayer("Terrain");
 		_gameObject.AddComponent<MeshFilter>().mesh         = _mesh;
 		_gameObject.AddComponent<MeshRenderer>().material   = materials[(int)_material - 1];
 		_gameObject.AddComponent<MeshCollider>().sharedMesh = _mesh;
@@ -264,12 +272,34 @@ public sealed class TerrainGenerator : MonoBehaviour
 		}
 		return false;
 	}
-	private enum Material
+	public void AddCube(Vector3 _point, int _index, Material _mat)
 	{
-		Air,
-		Grass,
-		Dirt,
-		Stone
+		// round the position
+		int _x = Mathf.FloorToInt(_point.x);
+		int _y = Mathf.CeilToInt(_point.y);
+		int _z = Mathf.FloorToInt(_point.z);
+		// check that there is nothing in the way on all layers except terrain
+		int _terrainLayer = LayerMask.GetMask("Terrain");
+		int _layerMask    = ~_terrainLayer;
+		if (Physics.CheckBox(new(_x, _y, _z), Vector3.one * .5f, Quaternion.identity, _layerMask))
+			return;
+		
+		if (maps[_index][_x, _y, _z].material == Material.Air)
+		{
+			maps[_index][_x, _y, _z].material = _mat;
+			// recreate the chunk foreach material
+			foreach (Material _material in Enum.GetValues(typeof(Material)))
+				if (_material != Material.Air)
+				{
+					GameObject _gameObject = transform.Find(_index + "_" + (int)_material).gameObject;
+					int        _xOffset    = (int)_gameObject.transform.position.x;
+					int        _zOffset    = (int)_gameObject.transform.position.z;
+					// destroy the old chunk
+					Destroy(_gameObject);
+					// create the new chunk
+					CreateMesh(_material, _xOffset, _zOffset, _index);
+				}
+		}
 	}
 	private struct Block
 	{

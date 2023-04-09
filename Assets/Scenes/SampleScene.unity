@@ -512,7 +512,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  jumpForce: 3
+  jumpForce: 1.5
   mouseSensitivity: 10
   isOffset: 0
   selectDistance: 5
@@ -1785,7 +1785,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: bc25c4b393ae6e740a9ffc091b3d2d30, type: 2}
   - {fileID: 2100000, guid: 367c0ddd0a8d792419a18029a6eace88, type: 2}
   riseSpeed: 50
-  pregen: 24
+  pregen: 48
 --- !u!4 &893308498
 Transform:
   m_ObjectHideFlags: 0
