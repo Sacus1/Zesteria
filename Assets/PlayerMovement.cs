@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
@@ -200,20 +201,49 @@ public sealed class PlayerMovement : MonoBehaviour
 		_angle                         = Mathf.Max(Mathf.Min(_angle, CAM_MAX), CAM_MIN);
 		cam.transform.localEulerAngles = new(_angle, 0, 0);
 	}
+	private IEnumerator ChangeFOV(float _target)
+	{
+		float _start = cam.fieldOfView;
+		float _time  = 0;
+		while (_time < 1)
+		{
+			_time           += Time.deltaTime * 2;
+			cam.fieldOfView =  Mathf.Lerp(_start, _target, _time);
+			yield return null;
+		}
+	}
+	private IEnumerator Run()
+	{
+		// rotate camera to increase sense of speed while running
+		Vector3 _lastPos = transform.position;
+		while (isRunning)
+		{
+			cam.transform.Rotate(Vector3.right, Mathf.Sin(Time.time * 10) * 0.5f);
+			cam.transform.Translate(Vector3.up                            * (Mathf.Sin(Time.time * 10) * 0.01f));
+			yield return null;
+			// if not sprinting stop running
+			if (Vector3.Distance(_lastPos, transform.position) < Time.deltaTime)
+			{
+				isRunning = false;
+				StartCoroutine(ChangeFOV(cam.fieldOfView / 1.2f));
+				mouseSensitivity *= 1.2f;
+				break;
+			}
+			_lastPos = transform.position;
+		}
+	}
 	private void OnRun(InputValue _value)
 	{
-		isRunning = _value.isPressed;
-		// if running increase fov and decrease mouse sensitivity
-		if (isRunning)
-		{
-			cam.fieldOfView  *= 1.2f;
-			mouseSensitivity /= 1.2f;
-		}
-		else
-		{
-			cam.fieldOfView  /= 1.2f;
-			mouseSensitivity *= 1.2f;
-		}
+		// if running increase fov and decrease mouse sensitivity using lerp
+		if (!_value.isPressed || !(moveDirection.magnitude > 0.5f))
+			return;
+
+		if (isRunning) return;
+
+		isRunning = true;
+		StartCoroutine(ChangeFOV(cam.fieldOfView * 1.2f));
+		StartCoroutine(Run());
+		mouseSensitivity /= 1.2f;
 	}
 	private void OnLeftClick()
 	{
