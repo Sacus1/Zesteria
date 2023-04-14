@@ -17,11 +17,13 @@ public sealed class PlayerMovement : MonoBehaviour
 	public        LineRenderer        lineRenderer; // this is the line renderer to draw the line around the cube
 	private       Camera              cam;
 	private       CharacterController controller;
+	private       GameObject          hand;
 	private       Vector3             moveDirection;
 	private       TerrainGenerator    terrain;
 	private void Start()
 	{
-		cam = GetComponentInChildren<Camera>();
+		cam  = GetComponentInChildren<Camera>();
+		hand = GameObject.Find("Hand");
 		// lock cursor
 		Cursor.lockState = CursorLockMode.Locked;
 		controller       = GetComponent<CharacterController>();
@@ -201,36 +203,48 @@ public sealed class PlayerMovement : MonoBehaviour
 		_angle                         = Mathf.Max(Mathf.Min(_angle, CAM_MAX), CAM_MIN);
 		cam.transform.localEulerAngles = new(_angle, 0, 0);
 	}
-	private IEnumerator ChangeFOV(float _target)
+	private IEnumerator ChangeFOV(float _target, float _duration)
 	{
 		float _start = cam.fieldOfView;
 		float _time  = 0;
-		while (_time < 1)
+		while (_time < _duration)
 		{
 			_time           += Time.deltaTime * 2;
 			cam.fieldOfView =  Mathf.Lerp(_start, _target, _time);
 			yield return null;
 		}
+		if (!(_target > _start))
+			yield break;
+		isRunning = true;
+		StartCoroutine(Run());
 	}
 	private IEnumerator Run()
 	{
 		// rotate camera to increase sense of speed while running
-		Vector3 _lastPos = transform.position;
+		Vector3 _lastPos      = transform.position;
+		Vector3 _startCamPos  = cam.transform.localPosition;
+		Vector3 _startHandPos = hand.transform.localPosition;
 		while (isRunning)
 		{
 			cam.transform.Rotate(Vector3.right, Mathf.Sin(Time.time * 10) * 0.5f);
 			cam.transform.Translate(Vector3.up                            * (Mathf.Sin(Time.time * 10) * 0.01f));
+			// rotate hand as well
+			hand.transform.Rotate(Vector3.right, Mathf.Sin(Time.time * 10) * -2f);
+
 			yield return null;
 			// if not sprinting stop running
 			if (Vector3.Distance(_lastPos, transform.position) < Time.deltaTime)
 			{
 				isRunning = false;
-				StartCoroutine(ChangeFOV(cam.fieldOfView / 1.2f));
+				StartCoroutine(ChangeFOV(cam.fieldOfView / 1.2f, 0.5f));
 				mouseSensitivity *= 1.2f;
 				break;
 			}
 			_lastPos = transform.position;
 		}
+		// reset camera rotation
+		cam.transform.localPosition  = _startCamPos;
+		hand.transform.localPosition = _startHandPos;
 	}
 	private void OnRun(InputValue _value)
 	{
@@ -240,10 +254,8 @@ public sealed class PlayerMovement : MonoBehaviour
 
 		if (isRunning) return;
 
-		isRunning = true;
-		StartCoroutine(ChangeFOV(cam.fieldOfView * 1.2f));
-		StartCoroutine(Run());
 		mouseSensitivity /= 1.2f;
+		StartCoroutine(ChangeFOV(cam.fieldOfView * 1.2f, 0.5f));
 	}
 	private void OnLeftClick()
 	{
