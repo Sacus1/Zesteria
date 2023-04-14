@@ -43,8 +43,8 @@ public sealed class PlayerMovement : MonoBehaviour
 		if (!GetCube(out RaycastHit _hit, out Vector3[] _points, selectDistance))
 			return;
 		// convert to world space
-		for (int i = 0; i < _points.Length; i++)
-			_points[i] = _hit.collider.transform.TransformPoint(_points[i]);
+		for (int _i = 0; _i < _points.Length; _i++)
+			_points[_i] = _hit.collider.transform.TransformPoint(_points[_i]);
 		// draw cube outline 
 		lineRenderer.positionCount = 17;
 		lineRenderer.SetPositions(new[]
@@ -230,10 +230,11 @@ public sealed class PlayerMovement : MonoBehaviour
 			cam.transform.Translate(Vector3.up                            * (Mathf.Sin(Time.time * 10) * 0.01f));
 			// rotate hand as well
 			hand.transform.Rotate(Vector3.right, Mathf.Sin(Time.time * 10) * -2f);
-
-			yield return null;
+			yield return new WaitForSeconds(0.05f);
+			float        _distanceSquared = (_lastPos - transform.position).sqrMagnitude;
+			const double MIN_DISTANCE     = 0.05f;
 			// if not sprinting stop running
-			if (Vector3.Distance(_lastPos, transform.position) < Time.deltaTime)
+			if (_distanceSquared < MIN_DISTANCE)
 			{
 				isRunning = false;
 				StartCoroutine(ChangeFOV(cam.fieldOfView / 1.2f, 0.5f));
