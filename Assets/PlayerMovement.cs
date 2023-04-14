@@ -20,6 +20,7 @@ public sealed class PlayerMovement : MonoBehaviour
 	private       GameObject          hand;
 	private       Vector3             moveDirection;
 	private       TerrainGenerator    terrain;
+	// TODO separate block interaction into its own script
 	private void Start()
 	{
 		cam  = GetComponentInChildren<Camera>();
