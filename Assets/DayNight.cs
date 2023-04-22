@@ -7,16 +7,16 @@ public sealed class DayNight : MonoBehaviour
 	public  float     dayLength = 180f; // seconds
 	public  float     angle;
 	public  Transform reference;
-	public  Material  daySkybox;
-	public  Material  nightSkybox;
+	public  Material  skybox;
 	public  int       sunRise = 6;
 	public  int       sunSet  = 18;
+	public  float     blend;
 	private Light     sun;
 	private void Start()
 	{
 		sun                   = GetComponent<Light>();
 		timeOfDay             = 12;
-		RenderSettings.skybox = daySkybox;
+		RenderSettings.skybox = skybox;
 		RenderSettings.sun    = sun;
 	}
 
@@ -39,14 +39,9 @@ public sealed class DayNight : MonoBehaviour
 		sun.transform.position = new Vector3(_x, _y, _z) + reference.position;
 		// set the sun rotation
 		sun.transform.LookAt(Vector3.zero);
-		// set the skybox based on the time of day
-		if (timeOfDay >= sunRise && timeOfDay <= sunSet)
-			RenderSettings.skybox = daySkybox;
-		else
-			RenderSettings.skybox = nightSkybox;
-
-		// set blend factor for the skybox
-		RenderSettings.skybox.SetFloat(BLEND, Mathf.Abs(timeOfDay / 12 - 1));
+		// set the skybox blend value
+		blend = Mathf.Clamp01((timeOfDay - sunRise) / (sunSet - sunRise));
+		skybox.SetFloat(BLEND, blend);
 
 	}
 }

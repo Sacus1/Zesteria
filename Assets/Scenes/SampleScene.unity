@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 0cd0203ab60f88f4db947a87b4f57cbd, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 37ea862921ddd8a49993719591f700e4, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -34,11 +34,11 @@ RenderSettings:
   m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
   m_DefaultReflectionMode: 0
   m_DefaultReflectionResolution: 2048
-  m_ReflectionBounces: 5
+  m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 2102392096}
-  m_IndirectSpecularColor: {r: 0.26224086, g: 0.7011422, b: 0.8317982, a: 1}
+  m_IndirectSpecularColor: {r: 0.26154742, g: 0.7011568, b: 0.83259225, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 9dbbeed857e21f348a8f35e9d47da4b9, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -590,7 +590,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 144709859}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edf05ee82bd85d47783953c005bc7f5d, type: 3}
+  m_Script: {fileID: 11500000, guid: bc6445897d6c049479108ca722f42c2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   selectDistance: 5
@@ -3425,7 +3425,6 @@ GameObject:
   - component: {fileID: 2102392097}
   - component: {fileID: 2102392096}
   - component: {fileID: 2102392098}
-  - component: {fileID: 2102392099}
   m_Layer: 0
   m_Name: Sun
   m_TagString: Untagged
@@ -3526,27 +3525,7 @@ MonoBehaviour:
   dayLength: 1200
   angle: 40
   reference: {fileID: 144709861}
-  daySkybox: {fileID: 2100000, guid: 0cd0203ab60f88f4db947a87b4f57cbd, type: 2}
-  nightSkybox: {fileID: 2100000, guid: 53d73dd4f99c4c84d95a657e638c4553, type: 2}
+  skybox: {fileID: 2100000, guid: 37ea862921ddd8a49993719591f700e4, type: 2}
   sunRise: 6
   sunSet: 18
---- !u!95 &2102392099
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2102392095}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 16515041a71f0b44c89ad2e53abd3d75, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
+  blend: 0
